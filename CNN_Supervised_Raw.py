@@ -23,7 +23,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from SpectroDataset import SpectroDataset
-from Model import Model
+from Model1D import Model
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -89,13 +89,13 @@ valid_transform = transforms.Compose([
         ])
 
 
-annots = loadmat('ls_animal.mat')
+annots = loadmat('ls_animal_73.mat')
 ls_animal = annots['ls_animal']
 # ls_animal = ls_animal[:,:13,:]
-annots = loadmat('ls_person.mat')
+annots = loadmat('ls_person_73.mat')
 ls_person = annots['ls_person']
 # ls_person = ls_person[:,:13,:]
-annots = loadmat('ls_tool.mat')
+annots = loadmat('ls_tool_73.mat')
 ls_tool = annots['ls_tool']
 
 ls_animal = ls_animal.reshape(ls_animal.shape[0], ls_animal.shape[1]*ls_animal.shape[2])
@@ -112,15 +112,17 @@ y = np.concatenate([ [0]*ls_animal.shape[0], [1]*ls_person.shape[0], [2]*ls_tool
 
 
 
-paths = np.concatenate([ls_animal, ls_tool])
+# paths = np.concatenate([ls_animal, ls_tool])
+paths = np.concatenate([ls_person, ls_tool])
 
-x = np.concatenate([ls_person, paths])
-y = np.concatenate([ [1]*ls_person.shape[0], [0]*paths.shape[0] ])
+# x = np.concatenate([ls_person, paths])
+x = np.concatenate([ls_animal, paths])
+# y = np.concatenate([ [1]*ls_person.shape[0], [0]*paths.shape[0] ])
+
+y = np.concatenate([ [1]*ls_animal.shape[0], [0]*paths.shape[0] ])
+
 
 # random.shuffle(y)
-
-# print(y)
-# print(random.shuffle(y))
 
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, test_size=0.2)
@@ -334,10 +336,13 @@ def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 num_para = count_parameters(myModel)
-print(num_para)
+print("Model Number of Parameters: ", num_para)
 
-# num_epochs=1  # Just for demo, adjust this higher.
-# training(myModel, train_dl, num_epochs)
+
+
+num_epochs=1  # Just for demo, adjust this higher.
+training(myModel, train_dl, num_epochs)
+
 
 
 cv = LeaveOneOut()
@@ -391,7 +396,19 @@ roc_auc_cnn = metrics.roc_auc_score(y_true_list, y_pred_list)
 
 print("AUC_ROC Score: ",roc_auc_cnn)
 
-plt.figure(0).clf()
-plt.plot([0, 1], [0, 1], linestyle='--', color='red', label='Random Classifier')
-plt.plot(fpr_cnn,tpr_cnn,color='red',label="CNN Animal, (AUC = %0.3f)"%(roc_auc_cnn))
-plt.legend(loc=0)
+from sklearn.metrics import precision_recall_curve
+from sklearn.metrics import auc, average_precision_score
+
+precision1, recall1, thresholds = precision_recall_curve(y_true_list, y_pred_list)
+# print(len(precision1), len(recall1))
+
+prauc = round(auc(recall1, precision1),6)
+print("PR Score: ",prauc)
+
+# plt.figure(0).clf()
+# plt.plot([0, 1], [0, 1], linestyle='--', color='red', label='Random Classifier')
+# plt.plot(fpr_cnn,tpr_cnn,color='red',label="CNN Animal, (AUC = %0.3f)"%(roc_auc_cnn))
+# plt.legend(loc=0)
+
+num_para = count_parameters(myModel)
+print("Model Number of Parameters: ", num_para)

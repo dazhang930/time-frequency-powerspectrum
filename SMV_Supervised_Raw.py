@@ -18,6 +18,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import cross_val_score
 from numpy import mean
 from numpy import std
+from sklearn.model_selection import train_test_split
 
 annots = loadmat('ls_animal.mat')
 ls_animal = annots['ls_animal']
@@ -40,11 +41,20 @@ x = np.concatenate([ls_animal, ls_person, ls_tool])
 y = np.concatenate([ [0]*ls_animal.shape[0], [1]*ls_person.shape[0], [2]*ls_tool.shape[0] ])
 
 
-paths = np.concatenate([ls_animal, ls_tool])
+# paths = np.concatenate([ls_animal, ls_tool])
 
-from sklearn.model_selection import train_test_split
+
+# x = np.concatenate([ls_person, paths])
+# y = np.concatenate([ [1]*ls_person.shape[0], [0]*paths.shape[0] ])
+
+paths = np.concatenate([ls_animal, ls_tool])
+# paths = np.concatenate([ls_person, ls_tool])
+
 x = np.concatenate([ls_person, paths])
+# x = np.concatenate([ls_animal, paths])
+
 y = np.concatenate([ [1]*ls_person.shape[0], [0]*paths.shape[0] ])
+# y = np.concatenate([ [1]*ls_animal.shape[0], [0]*paths.shape[0] ])
 
 cv = LeaveOneOut()
 # enumerate splits
@@ -103,13 +113,41 @@ for train_ix, test_ix in cv.split(x):
 # fpr2, tpr2, _ = metrics.roc_curve(y_test,  yhat)
 # print(fpr2, tpr2)
 
-y_pred = [0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-y_true = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-fpr2, tpr2, _ = metrics.roc_curve(y_true, y_pred)
+# y_pred2 = [1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0]
+y_pred2 = [0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
+fpr2, tpr2, _ = metrics.roc_curve(y_true, y_pred)
 auc2 = metrics.roc_auc_score(y_true, y_pred)
 
-plt.plot(fpr2,tpr2,label="SVM Person, (AUC = %0.3f)"%(auc2))
+fpr3, tpr3, _ = metrics.roc_curve(y_true, y_pred2)
+auc3 = metrics.roc_auc_score(y_true, y_pred2)
+
+print("AUC_ROC Score: ", auc2, auc3)
+
+plt.plot(fpr3,tpr3,color='orange', label="CNN Person, (AUC = %0.3f)"%(auc3))
+plt.plot(fpr2,tpr2,color='blue', label="SVM Person, (AUC = %0.3f)"%(auc2))
 plt.plot([0, 1], [0, 1], linestyle='--', color='red', label='Random Classifier') 
 plt.legend(loc=4)
 plt.show()
+
+
+from sklearn.metrics import precision_recall_curve
+from sklearn.metrics import auc, average_precision_score
+
+precision1, recall1, thresholds = precision_recall_curve(y_true, y_pred)
+precision2, recall2, thresholds2 = precision_recall_curve(y_true, y_pred2)
+# print(len(precision1), len(recall1))
+
+prauc = round(auc(recall1, precision1),6)
+prauc2 = round(auc(recall2, precision2),6)
+print("PR Score: ", prauc, prauc2)
+
+y_true = np.asarray(y_true)
+baseline = len(y_true[y_true==1]) / len(y_true)
+
+plt.plot(recall2,precision2,color='orange', label="CNN Person, (AUC = %0.3f)"%(prauc2))
+plt.plot(recall1,precision1,color='blue', label="SVM Person, (AUC = %0.3f)"%(prauc))
+plt.plot([0, 1], [baseline, baseline], color='red', linestyle='--', label='Baseline')
+plt.legend(loc=4)
+plt.show()
+
